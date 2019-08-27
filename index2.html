@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+   <p>
+    <div id="app" class="container mt-5">
+        <form @submit.prevent="add">  
+            <div><input type="text" v-model="name" class="form-control"></div>
+            <div class="alert alert-danger" v-if="errors.name">{{errors.name}}</div>
+            <div><input type="text" v-model="price" class="form-control"></div>
+            <div  class="alert alert-danger" v-if="errors.price">{{errors.price}}</div>
+            <div><button type="submit" class="btn btn-primary">Add</button></div>
+            
+        </form>
+        <div v-if="loading" class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+        <table class="table">
+            <tr>
+                <td>#</td>
+                <td>Nama</td>
+                <td>Harga</td>
+            </tr>
+            <tr v-for="(item, index) in items" :key="item.id">
+                <td>{{ ++index }}</td>
+                <td>{{ item.name }}</td>
+                <td>Rp{{item.price}}</td>
+                <td>
+                    <button@click="remove(item)"
+                        class="btn btn-danger">
+                        &times; </button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Rp{{ total }}</td>
+
+            </tr>
+
+        </table>
+       
+       <ul>
+        <li v-for="(item, index) in items" :key="index">
+                {{item.id}} - {{item.name}} - (Rp{{item.price}})
+        </li>
+
+       </ul>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            async mounted(){
+                this.loading=true
+                const response = await axios.get('http://cfc40bbc.ngrok.io/api/items')
+                this.items = response.data
+                this.loading = false
+                
+            },
+            /* mounted(){
+                axios.get('http://cfc40bbc.ngrok.io/api/items')
+                .then(response=> {
+                    console.log(response.data)
+                })
+            }
+            */
+
+
+            data() {
+                return {
+                    name:'',
+                    price:'',
+                    errors: {},
+                   items: [
+                 /* {id: 1, name: 'Indomie', price: 1500},
+                   {id: 2, name: 'Popmie', price: 4500},
+                   {id: 3, name: 'Aqua', price: 7500}, */
+                   ],
+                   loading: false
+                  
+                }
+
+            },
+
+            computed:{
+                total() {
+                    return this.items
+                    .map(item => Number(item.price))
+                    .reduce((prev, current) => prev + current, 0)
+
+                }
+
+            },
+
+            methods:{
+                add(){
+                    this.errors = {}
+
+                    if (this.name.trim()===""){
+                        this.errors.name = 'nama harus diisi'
+                
+                    }
+                    if (this.price.trim()===""){
+                        this.errors.price = 'harga harus diisi'
+                    }
+                    if (Object.values(this.errors).length > 0){
+                        return
+                    }
+                        
+
+                    
+                    this.items.push({
+                        id: Date.now(),
+                        name: this.name,
+                        price: this.price,
+
+                    })
+                    this.name=''
+                    this.price=''
+
+                },
+
+                remove(item){
+                    const index = this.items.indexOf(item)
+                    this.items.splice(index, 1)
+                },
+
+            }
+                
+            
+
+        })
+        </script>
+       
+</body>

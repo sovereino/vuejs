@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+</head>
+<body>
+   <p>
+    <div id="app">
+        {{message}}
+    <input type="text" v-model="message">
+    <button @click="pencet">pencet</button>
+    </p> 
+
+    <p>
+    <input type="text" v-model="password">
+    <div v-if="isValidPassword">VALID</div>
+    <div v-if="!isValidPassword">INVALID</div>
+    </p>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"> </script>
+    <script>
+        new Vue({
+           methods :{
+            pencet(){
+                window.alert(this.message)
+
+            }
+
+           },
+           
+            el: '#app',
+            data(){
+                return {
+                    message: 'hello Vue.js',
+                    password: '',
+                }
+
+            },
+            computed:{
+                isValidPassword(){
+                    return this.password ==='123'
+                }
+            }
+
+        })
+    
+    
+    </script>
+
+
+</body>
+</html>
